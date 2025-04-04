@@ -8,6 +8,14 @@ Este repositório contém instruções detalhadas para configurar um ambiente lo
 
 É necessário utilizar uma máquina Linux (preferencialmente Ubuntu) e possuir permissões de superusuário.
 
+Além disso, você precisará instalar os seguintes componentes antes de começar:
+
+- [x] Docker e Docker Compose  
+- [x] kubectl  
+- [x] Minikube  
+- [x] **Helm** (gerenciador de pacotes do Kubernetes)  
+- [x] K6
+
 ---
 
 ## 🐳 Docker & Docker Compose
@@ -35,6 +43,29 @@ docker context use default
 
 ---
 
+## ⚙️ kubectl
+
+### 📌 Para que serve?
+
+kubectl é a ferramenta oficial para gerenciar e interagir com clusters Kubernetes. É essencial para aplicar manifests, monitorar recursos e visualizar logs.
+
+### 📌 Instalação
+
+```bash
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+chmod +x kubectl
+sudo mv kubectl /usr/local/bin/
+```
+
+### 📌 Verificar instalação
+
+```bash
+kubectl version --client
+kubectl get nodes
+```
+
+---
+
 ## ☘️ Minikube
 
 ### 📌 Para que serve?
@@ -57,31 +88,30 @@ minikube config set driver docker
 
 ### 📌 Inicializar o cluster
 
+✅ Exemplo recomendado para 16 GB de RAM: (Ideal 8GB, mas vou usar 10GB)
+
 ```bash
-minikube start
+minikube start --memory=10240 --cpus=4 --driver=docker
 ```
 
 ---
 
-## ⚙️ kubectl
+## 📦 Helm
 
 ### 📌 Para que serve?
 
-kubectl é a ferramenta oficial para gerenciar e interagir com clusters Kubernetes. É essencial para aplicar manifests, monitorar recursos e visualizar logs.
+Helm é o gerenciador de pacotes do Kubernetes, usado para instalar aplicações de forma simples e reutilizável.
 
 ### 📌 Instalação
 
 ```bash
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-chmod +x kubectl
-sudo mv kubectl /usr/local/bin/
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 ```
 
 ### 📌 Verificar instalação
 
 ```bash
-kubectl version --client
-kubectl get nodes
+helm version
 ```
 
 ---
@@ -107,113 +137,15 @@ sudo apt install k6
 ```bash
 k6 version
 ```
-
----
-
-## 📊 Monitoramento e Logs com Prometheus, Grafana e Loki
-
-### 📌 Para que servem?
-
-- **Prometheus**: Coleta e armazena métricas de aplicações e infraestrutura.  
-- **Grafana**: Visualiza métricas e logs de forma gráfica e interativa.  
-- **Loki**: Gerencia e indexa logs, integrando-se ao Grafana para visualização.
-
----
-
-## 🚀 Passo a Passo para Configuração
-
-### 1. Instalar o Helm
-
-```bash
-curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-```
-
----
-
-### 2. Adicionar Repositórios do Helm
-
-```bash
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm repo add grafana https://grafana.github.io/helm-charts
-helm repo update
-```
-
----
-
-### 3. Criar Namespace para Monitoramento
-
-```bash
-kubectl create namespace monitoring
-```
-
----
-
-### 4. Instalar o Prometheus e o Grafana
-
-```bash
-helm install monitoring prometheus-community/kube-prometheus-stack --namespace monitoring
-```
-
----
-
-### 5. Instalar o Loki e Promtail
-
-```bash
-helm install loki grafana/loki-stack --namespace monitoring
-```
-
-Essa instalação inclui:
-- Loki (coletor e indexador de logs)
-- Promtail (agente para envio de logs dos pods)
-
----
-
-### 6. Acessar a Interface do Grafana
-
-```bash
-kubectl --namespace monitoring port-forward svc/monitoring-grafana 3000:80
-```
-
-Acesse: [http://localhost:3000](http://localhost:3000)  
-Usuário: `admin`  
-Senha: `prom-operator`
-
----
-
-### 7. Visualizar Logs no Grafana
-
-1. No menu lateral do Grafana, vá em **Explore**.
-2. Troque a fonte de dados para `Loki`. (http://loki.monitoring.svc.cluster.local:3100
-)
-3. Execute queries como:
-   ```logql
-   {app="my-app"} |= "error"
-   ```
-   para visualizar logs específicos da sua aplicação.
-
-#### Exemplos de queries úteis:
-
-```logql
-{job="kubernetes-pods"}
-{namespace="default"} |= "Exception"
-{app="my-app"} |~ "(?i)warn|error"
-```
-
-#### Importar Dashboard de Logs pronto:
-
-1. No Grafana, clique em **Dashboards > Import**.
-2. Use o ID `13639` (Loki: Log Panels).
-3. Escolha a fonte de dados `Loki` e conclua.
-
 ---
 
 ## ⚖️ Escalonamento Automático com KEDA
 
 ### 📌 Para que serve?
 
-O **KEDA** permite escalonar automaticamente aplicações no Kubernetes com base em eventos externos (como mensagens em uma fila SQS, métricas personalizadas, etc.).
+O **KEDA** permite escalonar automaticamente aplicações no Kubernetes com base em eventos externos (como mensagens em uma fila SQS, métricas personalizadas, etc).
 
-### 1. Instalar o KEDA via Helm
+### 1. Instalar o KEDA usando YAML files
 
 ```bash
 helm repo add kedacore https://kedacore.github.io/charts
@@ -263,7 +195,7 @@ spec:
 ### 3. Criar os Segredos da AWS (mesmo para LocalStack)
 
 ```bash
-kubectl create secret generic aws-secret   --from-literal=AWS_ACCESS_KEY_ID=test   --from-literal=AWS_SECRET_ACCESS_KEY=test
+kubectl create secret generic aws-secret --from-literal=AWS_ACCESS_KEY_ID=test --from-literal=AWS_SECRET_ACCESS_KEY=test
 ```
 
 ### 4. Aplicar os Manifests
@@ -272,11 +204,36 @@ kubectl create secret generic aws-secret   --from-literal=AWS_ACCESS_KEY_ID=test
 kubectl apply -f scaledobject-sqs.yaml
 ```
 
-### ✅ Verificar se o Autoscaling Funciona
+---
+
+## 📊 Monitoramento com Elasticsearch, Kibana e APM
+
+### 📌 Para que serve?
+
+O stack do Elasticsearch permite observabilidade completa em seu cluster Kubernetes, com:
+
+- **Elasticsearch** para armazenamento e busca de logs e métricas;
+- **Kibana** como interface gráfica para explorar dados e criar dashboards;
+- **APM Server** para coletar dados de performance de aplicações.
+
+### 📌 Ajustar parâmetro do kernel
 
 ```bash
-kubectl get hpa
-kubectl get deployment my-app
+minikube ssh -- "sudo sysctl -w vm.max_map_count=262144"
+```
+
+### 📌 Instalar componentes (fornecidos no diretório `elastic/`)
+
+```bash
+kubectl create -f elastic/elasticsearch.yaml
+kubectl create -f elastic/kibana.yaml
+kubectl create -f elastic/apm-server.yaml
+```
+
+### 📌 Acessar Kibana
+
+```bash
+minikube service kibana
 ```
 
 ---
@@ -296,7 +253,4 @@ docker-compose up -d
 aws --endpoint-url=http://localhost:4566 --region us-east-1 sqs list-queues
 ```
 
-Agora seu ambiente está pronto para uso!
-
-
-
+Agora seu ambiente está pronto para uso! O diretório `elastic/` já contém os manifests `elasticsearch.yaml`, `kibana.yaml` e `apm-server.yaml` prontos para aplicar no cluster.
