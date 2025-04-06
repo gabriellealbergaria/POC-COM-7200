@@ -254,3 +254,71 @@ aws --endpoint-url=http://localhost:4566 --region us-east-1 sqs list-queues
 ```
 
 Agora seu ambiente está pronto para uso! O diretório `elastic/` já contém os manifests `elasticsearch.yaml`, `kibana.yaml` e `apm-server.yaml` prontos para aplicar no cluster.
+
+### 📌 Usando docker da VM para não ser necessário subir ela para o dockerhub
+
+```bash
+eval $(minikube docker-env)
+```
+
+```bash
+docker build -t localstack-custom .
+```
+
+Para verificar se as filas foram criadas:
+
+```bash
+aws --endpoint-url=http://localhost:4566 --region us-east-1 sqs list-queues
+```
+
+Para verificar se os tópicos foram criados:
+
+```bash
+aws --endpoint-url=http://localhost:4566 --region us-east-1 sns list-topics
+```
+
+Para verificar as subscriptions:
+
+```bash
+aws --endpoint-url=http://localhost:4566 --region us-east-1 \
+  sns list-subscriptions-by-topic --topic-arn arn:aws:sns:us-east-1:000000000000:generic-topic 
+```
+
+Para publicar mensagem no tópico:
+
+```bash
+aws --endpoint-url=http://localhost:4566 --region us-east-1 \
+  sns publish \
+  --topic-arn arn:aws:sns:us-east-1:000000000000:generic-topic \
+  --message "Mensagem para fila generic" \
+  --message-attributes '{"type": {"DataType": "String", "StringValue": "generic"}}'
+```
+
+Para publicar mensagem na fila:
+
+```bash
+aws --endpoint-url=http://localhost:4566 --region us-east-1 \
+  sqs send-message \
+  --queue-url http://localhost:4566/000000000000/generic-queue \
+  --message-body "Mensagem enviada direto para a fila generic"
+```
+
+Para verificar se a mensagem chegou:
+
+```bash
+aws --endpoint-url=http://localhost:4566 --region us-east-1 \
+  sqs receive-message \
+  --queue-url http://localhost:4566/000000000000/generic-queue \
+  --wait-time-seconds 5 \
+  --visibility-timeout 0 \
+  --message-attribute-names All \
+  --max-number-of-messages 10
+```
+
+Para limpar a fila:
+
+```bash
+aws --endpoint-url=http://localhost:4566 --region us-east-1 \
+  sqs purge-queue \
+  --queue-url http://localhost:4566/000000000000/generic-queue
+```
