@@ -1,3 +1,4 @@
+
 # 🎩 POC - Ambiente Local com Minikube, Docker, kubectl e K6
 
 Este repositório contém instruções detalhadas para configurar um ambiente local utilizando **Minikube**, **Docker**, **kubectl** e **K6**, visando facilitar a realização de provas de conceito (POC) e testes de carga simulados em Kubernetes.
@@ -137,6 +138,7 @@ sudo apt install k6
 ```bash
 k6 version
 ```
+
 ---
 
 ## ⚖️ Escalonamento Automático com KEDA
@@ -145,7 +147,7 @@ k6 version
 
 O **KEDA** permite escalonar automaticamente aplicações no Kubernetes com base em eventos externos (como mensagens em uma fila SQS, métricas personalizadas, etc).
 
-### 1. Instalar o KEDA usando YAML files
+### 1. Instalar o KEDA usando Helm
 
 ```bash
 helm repo add kedacore https://kedacore.github.io/charts
@@ -160,7 +162,7 @@ apiVersion: keda.sh/v1alpha1
 kind: TriggerAuthentication
 metadata:
   name: aws-trigger-auth
-  namespace: default
+  namespace: apps
 spec:
   secretTargetRef:
     - parameter: awsAccessKeyID
@@ -174,7 +176,7 @@ apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
   name: my-app-sqs-scaler
-  namespace: default
+  namespace: apps
 spec:
   scaleTargetRef:
     name: my-app
@@ -192,29 +194,22 @@ spec:
         name: aws-trigger-auth
 ```
 
-### 3. Criar os Segredos da AWS (mesmo para LocalStack)
+### 3. Criar os Segredos da AWS
 
 ```bash
-kubectl create secret generic aws-secret --from-literal=AWS_ACCESS_KEY_ID=test --from-literal=AWS_SECRET_ACCESS_KEY=test
-```
-
-### 4. Aplicar os Manifests
-
-```bash
-kubectl apply -f scaledobject-sqs.yaml
+kubectl create secret generic aws-secret --from-literal=AWS_ACCESS_KEY_ID=test --from-literal=AWS_SECRET_ACCESS_KEY=test -n apps
 ```
 
 ---
 
 ## 📊 Monitoramento com Elasticsearch, Kibana e APM
 
-### 📌 Para que serve?
+### 📌 Criar Namespaces
 
-O stack do Elasticsearch permite observabilidade completa em seu cluster Kubernetes, com:
-
-- **Elasticsearch** para armazenamento e busca de logs e métricas;
-- **Kibana** como interface gráfica para explorar dados e criar dashboards;
-- **APM Server** para coletar dados de performance de aplicações.
+```bash
+kubectl create namespace monitoring
+kubectl create namespace apps
+```
 
 ### 📌 Ajustar parâmetro do kernel
 
@@ -225,100 +220,27 @@ minikube ssh -- "sudo sysctl -w vm.max_map_count=262144"
 ### 📌 Instalar componentes (fornecidos no diretório `elastic/`)
 
 ```bash
-kubectl create -f elastic/elasticsearch.yaml
-kubectl create -f elastic/kibana.yaml
-kubectl create -f elastic/apm-server.yaml
+kubectl create -n monitoring -f elastic/elasticsearch.yaml
+kubectl create -n monitoring -f elastic/kibana.yaml
+kubectl create -n monitoring -f elastic/apm-server.yaml
 ```
 
 ### 📌 Acessar Kibana
 
 ```bash
-minikube service kibana
+minikube service kibana -n monitoring
 ```
 
 ---
 
 ## 🚀 Inicializando o Ambiente
 
-### 📌 Executar o Local Stack
 
-```bash
-chmod +x create-queues.sh
-docker-compose up -d
-```
-
-### 📌 Listar as filas criadas
-
-```bash
-aws --endpoint-url=http://localhost:4566 --region us-east-1 sqs list-queues
-```
-
-Agora seu ambiente está pronto para uso! O diretório `elastic/` já contém os manifests `elasticsearch.yaml`, `kibana.yaml` e `apm-server.yaml` prontos para aplicar no cluster.
-
-### 📌 Usando docker da VM para não ser necessário subir ela para o dockerhub
+### 📌 Usar docker da VM
 
 ```bash
 eval $(minikube docker-env)
-```
-
-```bash
 docker build -t localstack-custom .
 ```
 
-Para verificar se as filas foram criadas:
-
-```bash
-aws --endpoint-url=http://localhost:4566 --region us-east-1 sqs list-queues
-```
-
-Para verificar se os tópicos foram criados:
-
-```bash
-aws --endpoint-url=http://localhost:4566 --region us-east-1 sns list-topics
-```
-
-Para verificar as subscriptions:
-
-```bash
-aws --endpoint-url=http://localhost:4566 --region us-east-1 \
-  sns list-subscriptions-by-topic --topic-arn arn:aws:sns:us-east-1:000000000000:generic-topic 
-```
-
-Para publicar mensagem no tópico:
-
-```bash
-aws --endpoint-url=http://localhost:4566 --region us-east-1 \
-  sns publish \
-  --topic-arn arn:aws:sns:us-east-1:000000000000:generic-topic \
-  --message "Mensagem para fila generic" \
-  --message-attributes '{"type": {"DataType": "String", "StringValue": "generic"}}'
-```
-
-Para publicar mensagem na fila:
-
-```bash
-aws --endpoint-url=http://localhost:4566 --region us-east-1 \
-  sqs send-message \
-  --queue-url http://localhost:4566/000000000000/generic-queue \
-  --message-body "Mensagem enviada direto para a fila generic"
-```
-
-Para verificar se a mensagem chegou:
-
-```bash
-aws --endpoint-url=http://localhost:4566 --region us-east-1 \
-  sqs receive-message \
-  --queue-url http://localhost:4566/000000000000/generic-queue \
-  --wait-time-seconds 5 \
-  --visibility-timeout 0 \
-  --message-attribute-names All \
-  --max-number-of-messages 10
-```
-
-Para limpar a fila:
-
-```bash
-aws --endpoint-url=http://localhost:4566 --region us-east-1 \
-  sqs purge-queue \
-  --queue-url http://localhost:4566/000000000000/generic-queue
-```
+--- 
