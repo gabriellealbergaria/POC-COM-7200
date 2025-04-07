@@ -234,5 +234,40 @@ minikube service kibana -n monitoring
 
 ```bash
 eval $(minikube docker-env)
-docker build -t localstack-custom .
+```
+
+### Build Custom LocalStack
+
+```bash
+docker build -t localstack-custom localstack/
+```
+
+### Aplicar o deployment 
+
+```bash 
+kubectl create -n apps -f localstack/localstack.yaml 
+```
+
+### Build Custom demo-publisher
+
+```bash
+docker build -t demo-publisher demo-publisher/
+```
+
+### Aplicar o deployment
+
+```bash 
+kubectl create -n apps -f demo-publisher/k8s/demo-publisher.yaml 
+```
+
+### Build Custom demo-consumer
+
+```bash
+docker build -t demo-consumer demo-consumer/
+```
+
+### Aplicar o deployment
+
+```bash 
+kubectl create -n apps -f demo-consumer/k8s/demo-consumer.yaml 
 ```

@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-publisher
+  namespace: apps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-publisher
+  template:
+    metadata:
+      labels:
+        app: demo-publisher
+    spec:
+      containers:
+        - name: demo-publisher
+          image: demo-publisher:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: JAVA_TOOL_OPTIONS
+              value: "-javaagent:/elastic-apm-agent.jar"
+            - name: ELASTIC_APM_SERVICE_NAME
+              value: "demo-publisher"
+            - name: ELASTIC_APM_SERVER_URL
+              value: "http://apm-server.monitoring.svc.cluster.local:8200"
+            - name: ELASTIC_APM_APPLICATION_PACKAGES
+              value: "com.example.demo.publisher.config"
+
+            - name: SERVER_PORT
+              value: "8080"
+            - name: SERVER_CONTEXT_PATH
+              value: "/demo-publisher/v1"
+
+            - name: AWS_REGION
+              value: "us-east-1"
+            - name: AWS_ENDPOINT
+              value: "http://localstack:4566"
+            - name: AWS_ACCESS_KEY
+              value: "test"
+            - name: AWS_SECRET_KEY
+              value: "test"
+
+            - name: AWS_SNS_TOPIC_ARN
+              value: "arn:aws:sns:us-east-1:000000000000:generic-topic"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-publisher
+  namespace: apps
+spec:
+  selector:
+    app: demo-publisher
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30080

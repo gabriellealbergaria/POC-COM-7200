@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: localstack
+  namespace: apps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: localstack
+  template:
+    metadata:
+      labels:
+        app: localstack
+    spec:
+      containers:
+        - name: localstack
+          image: localstack-custom:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 4566
+            - containerPort: 4510
+            - containerPort: 4511
+            - containerPort: 4512
+            - containerPort: 4513
+            - containerPort: 4514
+            - containerPort: 4515
+            - containerPort: 4516
+            - containerPort: 4517
+            - containerPort: 4518
+            - containerPort: 4519
+          env:
+            - name: LAMBDA_EXECUTOR
+              value: "local"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: localstack
+  namespace: apps
+spec:
+  selector:
+    app: localstack
+  type: NodePort
+  ports:
+    - name: gateway
+      port: 4566
+      targetPort: 4566
+      nodePort: 30066
+    - name: svc-4510
+      port: 4510
+      targetPort: 4510
+      nodePort: 30510
+    # Adicione mais se necessário
