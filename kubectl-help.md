@@ -18,3 +18,6 @@ kubectl cp loki-stack-datasource.yaml monitoring/monitoring-grafana-c666667cb-st
 
 
 kubectl port-forward -n monitoring deployment/apm-server 8200:8200
+
+
+kubectl logs -n monitoring -l k8s-app=filebeat

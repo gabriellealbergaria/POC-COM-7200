@@ -196,7 +196,7 @@ spec:
 
 ---
 
-## 📊 Monitoramento com Elasticsearch, Kibana e APM
+## 📊 Monitoramento com Elasticsearch, Kibana, APM e Filebeat
 
 ### 📌 Criar Namespaces
 
@@ -217,6 +217,7 @@ minikube ssh -- "sudo sysctl -w vm.max_map_count=262144"
 kubectl create -n monitoring -f elastic/elasticsearch.yaml
 kubectl create -n monitoring -f elastic/kibana.yaml
 kubectl create -n monitoring -f elastic/apm-server.yaml
+kubectl create -n monitoring -f elastic/filebeat.yaml   # ➕ Filebeat para coleta de logs
 ```
 
 ### 📌 Acessar Kibana
@@ -229,12 +230,9 @@ minikube service kibana -n monitoring
 
 ## 🚀 Inicializando o Ambiente
 
-
 ### 📌 Usar docker da VM
 
 ```bash
 eval $(minikube docker-env)
 docker build -t localstack-custom .
 ```
-
---- 
