@@ -39,7 +39,7 @@ EOF
     --attributes file://"$POLICY_FILE"
 }
 
-# Inscreve a fila no tópico com filtro SNS
+# Inscreve a fila no tópico com filtro SNS e entrega raw
 subscribe_queue() {
   local QUEUE_ARN=$1
   local FILTER=$2
@@ -48,7 +48,10 @@ subscribe_queue() {
     --topic-arn "$TOPIC_ARN" \
     --protocol sqs \
     --notification-endpoint "$QUEUE_ARN" \
-    --attributes "{\"FilterPolicy\": \"{\\\"type\\\": [\\\"$FILTER\\\"]}\"}"
+    --attributes "{
+      \"FilterPolicy\": \"{\\\"type\\\": [\\\"$FILTER\\\"]}\",
+      \"RawMessageDelivery\": \"true\"
+    }"
 }
 
 # Mapeamento: nome da fila -> filtro
@@ -68,4 +71,4 @@ for QUEUE_NAME in "${!QUEUES[@]}"; do
   subscribe_queue "$QUEUE_ARN" "$FILTER"
 done
 
-echo "✅ Tópico e filas configurados e inscritos com sucesso!"
+echo "✅ Tópico e filas configurados e inscritos com sucesso com RawMessageDelivery!"
