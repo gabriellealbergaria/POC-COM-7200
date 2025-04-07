@@ -271,3 +271,15 @@ docker build -t demo-consumer demo-consumer/
 ```bash 
 kubectl create -n apps -f demo-consumer/k8s/demo-consumer.yaml 
 ```
+
+### Config HPA 
+
+```bash 
+minikube addons enable metrics-server
+```
+
+### ScaleObjects KEDA
+
+```bash 
+aws --endpoint-url=http://localstack.apps.svc.cluster.local:4566 sqs get-queue-attributes --queue-url http://localstack.apps.svc.cluster.local:4566/000000000000/generic-queue --attribute-name All
+```

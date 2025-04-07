@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-consumer-default
+  namespace: apps
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: demo-consumer-default
+  template:
+    metadata:
+      labels:
+        app: demo-consumer-default
+    spec:
+      containers:
+        - name: demo-consumer
+          image: demo-consumer:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 9090
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          env:
+            - name: JAVA_TOOL_OPTIONS
+              value: "-javaagent:/elastic-apm-agent.jar"
+            - name: ELASTIC_APM_SERVICE_NAME
+              value: "demo-consumer"
+            - name: ELASTIC_APM_SERVER_URL
+              value: "http://apm-server.monitoring.svc.cluster.local:8200"
+            - name: ELASTIC_APM_APPLICATION_PACKAGES
+              value: "com.example.demo.consumer.config"
+            - name: SERVER_PORT
+              value: "9090"
+            - name: SERVER_CONTEXT_PATH
+              value: "/demo-consumer/v1"
+            - name: AWS_REGION
+              value: "us-east-1"
+            - name: AWS_ENDPOINT
+              value: "http://localstack:4566"
+            - name: AWS_ACCESS_KEY
+              value: "test"
+            - name: AWS_SECRET_KEY
+              value: "test"
+            - name: AWS_SQS_QUEUE_URL_1
+              value: "http://localstack:4566/000000000000/generic-queue"
+            - name: AWS_SQS_QUEUE_URL_2
+              value: "http://localstack:4566/000000000000/generic-queue-lazy-time"
+            - name: SQS_CONSUMER_1_ENABLED
+              value: "true"
+            - name: SQS_CONSUMER_1_PARALLEL
+              value: "false"
+            - name: SQS_CONSUMER_1_THREADS
+              value: "5"
+            - name: SQS_CONSUMER_2_ENABLED
+              value: "true"
+            - name: SQS_CONSUMER_2_PARALLEL
+              value: "false"
+            - name: SQS_CONSUMER_2_THREADS
+              value: "5"
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: demo-consumer-default-hpa
+  namespace: apps
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: demo-consumer-default
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70

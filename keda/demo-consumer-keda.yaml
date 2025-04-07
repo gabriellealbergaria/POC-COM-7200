@@ -1,0 +1,72 @@
+# Secret com credenciais AWS
+apiVersion: v1
+kind: Secret
+metadata:
+  name: aws-credentials
+  namespace: apps
+type: Opaque
+data:
+  AWS_ACCESS_KEY_ID: dGVzdA==        # "test"
+  AWS_SECRET_ACCESS_KEY: dGVzdA==    # "test"
+
+---
+# TriggerAuthentication para KEDA
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: keda-aws-credentials
+  namespace: apps
+spec:
+  secretTargetRef:
+    - parameter: awsAccessKeyID
+      name: aws-credentials
+      key: AWS_ACCESS_KEY_ID
+    - parameter: awsSecretAccessKey
+      name: aws-credentials
+      key: AWS_SECRET_ACCESS_KEY
+
+---
+# ScaledObject para generic-queue
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: demo-consumer-generic-queue
+  namespace: apps
+spec:
+  scaleTargetRef:
+    name: demo-consumer
+  pollingInterval: 30
+  cooldownPeriod: 300
+  minReplicaCount: 1
+  maxReplicaCount: 10
+  triggers:
+    - type: aws-sqs-queue
+      metadata:
+        queueURL: http://localstack:4566/000000000000/generic-queue
+        queueLength: "5"
+        awsRegion: us-east-1
+      authenticationRef:
+        name: keda-aws-credentials
+
+---
+# ScaledObject para generic-queue-lazy-time
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: demo-consumer-generic-queue-lazy-time
+  namespace: apps
+spec:
+  scaleTargetRef:
+    name: demo-consumer
+  pollingInterval: 30
+  cooldownPeriod: 300
+  minReplicaCount: 1
+  maxReplicaCount: 5
+  triggers:
+    - type: aws-sqs-queue
+      metadata:
+        queueURL: http://localstack:4566/000000000000/generic-queue-lazy-time
+        queueLength: "5"
+        awsRegion: us-east-1
+      authenticationRef:
+        name: keda-aws-credentials
