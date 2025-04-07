@@ -21,3 +21,7 @@ kubectl port-forward -n monitoring deployment/apm-server 8200:8200
 
 
 kubectl logs -n monitoring -l k8s-app=filebeat
+
+
+kubectl rollout restart deployment demo-publisher -n apps
+
