@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: demo-publisher
+
+server:
+  port: ${SERVER_PORT}
+  servlet:
+    context-path: ${SERVER_CONTEXT_PATH}
+
+logging:
+  level:
+    root: INFO
+
+aws:
+  region: ${AWS_REGION}
+  endpoint: ${AWS_ENDPOINT}
+  credentials:
+    access-key: ${AWS_ACCESS_KEY}
+    secret-key: ${AWS_SECRET_KEY}
+  sns:
+    topic-arn: ${AWS_SNS_TOPIC_ARN}
