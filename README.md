@@ -194,12 +194,6 @@ spec:
         name: aws-trigger-auth
 ```
 
-### 3. Criar os Segredos da AWS
-
-```bash
-kubectl create secret generic aws-secret --from-literal=AWS_ACCESS_KEY_ID=test --from-literal=AWS_SECRET_ACCESS_KEY=test -n apps
-```
-
 ---
 
 ## 📊 Monitoramento com Elasticsearch, Kibana e APM
