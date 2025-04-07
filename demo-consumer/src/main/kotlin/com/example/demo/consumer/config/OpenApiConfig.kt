@@ -13,9 +13,9 @@ class OpenApiConfig {
         return OpenAPI()
             .info(
                 Info()
-                    .title("Demo Publisher API")
+                    .title("Demo Consumer API")
                     .version("1.0")
-                    .description("API documentation for Demo Publisher")
+                    .description("API documentation for Demo Consumer")
             )
     }
 }

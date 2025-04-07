@@ -15,3 +15,6 @@ kubectl cp monitoring/monitoring-grafana-c666667cb-sth92:/etc/grafana/provisioni
 
 kubectl cp datasource.yaml monitoring/monitoring-grafana-c666667cb-sth92:/etc/grafana/provisioning/datasources/datasource.yaml
 kubectl cp loki-stack-datasource.yaml monitoring/monitoring-grafana-c666667cb-sth92:/etc/grafana/provisioning/datasources/loki-stack-datasource.yaml
+
+
+kubectl port-forward -n monitoring deployment/apm-server 8200:8200
