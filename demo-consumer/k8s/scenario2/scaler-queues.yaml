@@ -31,9 +31,9 @@ spec:
   scaleTargetRef:
     name: demo-consumer-fila-1
   minReplicaCount: 0
-  maxReplicaCount: 10
+  maxReplicaCount: 5
   pollingInterval: 30
-  cooldownPeriod: 300
+  cooldownPeriod: 30
   triggers:
     - type: aws-sqs-queue
       metadata:
@@ -53,9 +53,9 @@ spec:
   scaleTargetRef:
     name: demo-consumer-fila-2
   minReplicaCount: 0
-  maxReplicaCount: 10
+  maxReplicaCount: 5
   pollingInterval: 30
-  cooldownPeriod: 300
+  cooldownPeriod: 30
   triggers:
     - type: aws-sqs-queue
       metadata:

@@ -11,6 +11,7 @@ import software.amazon.awssdk.services.sqs.SqsClient
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest
 import java.time.Duration
+import java.time.Instant
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -54,6 +55,9 @@ class Queue1Consumer(
                     processingExecutor.submit {
                         try {
                             val dto: PublishRequestDTO = objectMapper.readValue(msg.body())
+
+                            dto.outputTimestamp = Instant.now();
+
                             log.info("Processando mensagem: {}", dto)
 
                             // ⏱ Simula tempo de processamento

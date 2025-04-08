@@ -94,7 +94,7 @@ minikube config set driver docker
 Para máquinas com **32 GB de RAM**, aloque metade da memória para o cluster:
 
 ```bash
-minikube start --memory=16384 --cpus=6 --driver=docker
+minikube start --memory=24576 --cpus=6 --driver=docker
 ```
 
 | Memória da Máquina | Memória para Minikube |
