@@ -111,8 +111,6 @@ minikube start --memory=16384 --cpus=6 --driver=docker
 ## ➕ Addons Úteis
 
 ```bash
-minikube addons enable ingress
-minikube addons enable metrics-server
 minikube addons enable dashboard
 ```
 
