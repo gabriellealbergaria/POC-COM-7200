@@ -48,7 +48,7 @@ spec:
             - name: AWS_SECRET_KEY
               value: "test"
             - name: AWS_SQS_QUEUE_URL_1
-              value: "http://localstack:4566/000000000000/generic-queue"
+              value: "http://localstack:4566/000000000000/generic-queue-real-time"
             - name: AWS_SQS_QUEUE_URL_2
               value: "http://localstack:4566/000000000000/generic-queue-lazy-time"
             - name: SQS_CONSUMER_1_ENABLED
