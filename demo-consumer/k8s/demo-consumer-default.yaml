@@ -57,9 +57,13 @@ spec:
               value: "false"
             - name: SQS_CONSUMER_1_THREADS
               value: "5"
+            - name: SQS_CONSUMER_2_DELAY
+              value: "1s"
             - name: SQS_CONSUMER_2_ENABLED
               value: "true"
             - name: SQS_CONSUMER_2_PARALLEL
               value: "false"
             - name: SQS_CONSUMER_2_THREADS
               value: "5"
+            - name: SQS_CONSUMER_2_DELAY
+              value: "1s"

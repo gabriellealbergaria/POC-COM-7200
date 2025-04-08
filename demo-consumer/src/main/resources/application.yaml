@@ -22,7 +22,9 @@ aws:
     consumer-1-enabled: ${SQS_CONSUMER_1_ENABLED}
     consumer-1-parallel: ${SQS_CONSUMER_1_PARALLEL}
     consumer-1-threads: ${SQS_CONSUMER_1_THREADS}
+    consumer-1-delay: ${SQS_CONSUMER_1_DELAY}
     queue-url-2: ${AWS_SQS_QUEUE_URL_2}
     consumer-2-enabled: ${SQS_CONSUMER_2_ENABLED}
     consumer-2-parallel: ${SQS_CONSUMER_2_PARALLEL}
     consumer-2-threads: ${SQS_CONSUMER_2_THREADS}
+    consumer-2-delay: ${SQS_CONSUMER_2_DELAY}

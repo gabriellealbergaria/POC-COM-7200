@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component
 import software.amazon.awssdk.services.sqs.SqsClient
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest
+import java.time.Duration
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -20,7 +21,8 @@ class Queue1Consumer(
     @Value("\${aws.sqs.queue-url-1}") private val queueUrl: String,
     @Value("\${aws.sqs.consumer-1-enabled}") private val enabled: Boolean,
     @Value("\${aws.sqs.consumer-1-parallel}") private val parallelProcessing: Boolean,
-    @Value("\${aws.sqs.consumer-1-threads}") private val threadCount: Int
+    @Value("\${aws.sqs.consumer-1-threads}") private val threadCount: Int,
+    @Value("\${aws.sqs.consumer-1-delay}") private val processingDelay: Duration
 ) {
 
     private val pollingExecutor = Executors.newSingleThreadExecutor()
@@ -37,7 +39,7 @@ class Queue1Consumer(
             return
         }
 
-        log.info("Queue1Consumer iniciado. Paralelismo: {}, Threads: {}", parallelProcessing, threadCount)
+        log.info("Queue1Consumer iniciado. Paralelismo: {}, Threads: {}, Delay: {}", parallelProcessing, threadCount, processingDelay)
 
         pollingExecutor.submit {
             while (true) {
@@ -54,7 +56,8 @@ class Queue1Consumer(
                             val dto: PublishRequestDTO = objectMapper.readValue(msg.body())
                             log.info("Processando mensagem: {}", dto)
 
-                            // TODO: lógica de negócio aqui
+                            // ⏱ Simula tempo de processamento
+                            Thread.sleep(processingDelay.toMillis())
 
                             val deleteRequest = DeleteMessageRequest.builder()
                                 .queueUrl(queueUrl)
