@@ -1,26 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
-    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
 
+    <!-- JSON para stdout com logstash-logback-encoder -->
     <appender name="JSON_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
             <providers>
                 <timestamp>
                     <fieldName>timestamp</fieldName>
                 </timestamp>
+
                 <loggerName>
                     <fieldName>logger</fieldName>
                 </loggerName>
+
+                <threadName>
+                    <fieldName>thread</fieldName>
+                </threadName>
+
+                <logLevel>
+                    <fieldName>level</fieldName>
+                </logLevel>
+
                 <pattern>
                     <pattern>
                         {
-                        "level": "%level",
-                        "thread": "%thread",
                         "message": "%message"
                         }
                     </pattern>
                 </pattern>
+
                 <stackTrace>
                     <fieldName>stack_trace</fieldName>
                 </stackTrace>
@@ -28,7 +36,9 @@
         </encoder>
     </appender>
 
+    <!-- Root logger usando o appender JSON -->
     <root level="INFO">
         <appender-ref ref="JSON_CONSOLE"/>
     </root>
+
 </configuration>
