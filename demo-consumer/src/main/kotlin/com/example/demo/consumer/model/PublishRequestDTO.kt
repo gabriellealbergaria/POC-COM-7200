@@ -8,5 +8,5 @@ data class PublishRequestDTO(
     val message: String,
     val type: String? = null,
     val inputTimestamp: Instant? = null,
-    val outputTimestamp: Instant? = null
+    val outputTimestamp: Instant = Instant.now()
 )

@@ -22,7 +22,7 @@ class Queue2Consumer(
     @Value("\${aws.sqs.consumer-2-enabled}") private val enabled: Boolean,
     @Value("\${aws.sqs.consumer-2-parallel}") private val parallelProcessing: Boolean,
     @Value("\${aws.sqs.consumer-2-threads}") private val threadCount: Int,
-    @Value("\${aws.sqs.consumer-1-delay}") private val processingDelay: Duration
+    @Value("\${aws.sqs.consumer-2-delay}") private val processingDelay: Duration
 ) {
 
     private val pollingExecutor = Executors.newSingleThreadExecutor()

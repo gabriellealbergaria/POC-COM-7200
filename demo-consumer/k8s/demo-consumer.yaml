@@ -128,7 +128,7 @@ spec:
             - name: SQS_CONSUMER_1_THREADS
               value: "0"
             - name: SQS_CONSUMER_1_DELAY
-              value: "0s"
+              value: "1s"
             - name: SQS_CONSUMER_2_ENABLED
               value: "true"
             - name: SQS_CONSUMER_2_PARALLEL
