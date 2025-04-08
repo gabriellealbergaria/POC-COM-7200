@@ -1,38 +1,38 @@
 
 # 🎩 POC - Ambiente Local com Minikube, Docker, kubectl e K6
 
-Este repositório contém instruções detalhadas para configurar um ambiente local utilizando **Minikube**, **Docker**, **kubectl** e **K6**, visando facilitar a realização de provas de conceito (POC) e testes de carga simulados em Kubernetes.
+Este repositório fornece um guia passo a passo para configurar um ambiente local com **Minikube**, **Docker**, **kubectl** e **K6**, ideal para provas de conceito (POCs), testes de carga e experimentação em Kubernetes.
 
 ---
 
 ## ✅ Pré-requisitos
 
-É necessário utilizar uma máquina Linux (preferencialmente Ubuntu) e possuir permissões de superusuário.
+Recomenda-se o uso de uma máquina **Linux (Ubuntu preferencialmente)** com permissões de superusuário.
 
-Além disso, você precisará instalar os seguintes componentes antes de começar:
+Você precisará instalar os seguintes componentes antes de iniciar:
 
 - [x] Docker e Docker Compose  
 - [x] kubectl  
 - [x] Minikube  
-- [x] **Helm** (gerenciador de pacotes do Kubernetes)  
+- [x] Helm  
 - [x] K6
 
 ---
 
 ## 🐳 Docker & Docker Compose
 
-### 📌 Para que serve?
+### 📌 O que é?
 
-Docker permite executar containers localmente, sendo utilizado pelo Minikube como driver padrão, evitando o uso de máquinas virtuais adicionais.
+O Docker permite executar containers localmente e é utilizado como driver padrão do Minikube, dispensando o uso de máquinas virtuais.
 
-### 📌 Instalação
+### ⚙️ Instalação
 
 ```bash
 sudo apt update
 sudo apt install docker.io docker-compose -y
 ```
 
-### 📌 Configuração opcional (Docker sem `sudo`)
+### 🔓 Executar Docker sem `sudo` (opcional)
 
 ```bash
 sudo groupadd docker
@@ -46,19 +46,19 @@ docker context use default
 
 ## ⚙️ kubectl
 
-### 📌 Para que serve?
+### 📌 O que é?
 
-kubectl é a ferramenta oficial para gerenciar e interagir com clusters Kubernetes. É essencial para aplicar manifests, monitorar recursos e visualizar logs.
+`kubectl` é a ferramenta de linha de comando oficial do Kubernetes, essencial para aplicar manifests, inspecionar recursos e visualizar logs.
 
-### 📌 Instalação
+### ⚙️ Instalação
 
 ```bash
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+curl -LO "https://dl.k8s.io/release/$(curl -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 chmod +x kubectl
 sudo mv kubectl /usr/local/bin/
 ```
 
-### 📌 Verificar instalação
+### 🔍 Verificação
 
 ```bash
 kubectl version --client
@@ -69,11 +69,11 @@ kubectl get nodes
 
 ## ☘️ Minikube
 
-### 📌 Para que serve?
+### 📌 O que é?
 
-Minikube permite criar rapidamente um cluster Kubernetes local para desenvolvimento e testes, simulando o ambiente de produção.
+O Minikube permite criar um cluster Kubernetes local de forma rápida, ideal para desenvolvimento e testes em um ambiente que simula produção.
 
-### 📌 Instalação
+### ⚙️ Instalação
 
 ```bash
 curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
@@ -81,35 +81,60 @@ chmod +x minikube-linux-amd64
 sudo mv minikube-linux-amd64 /usr/local/bin/minikube
 ```
 
-### 📌 Configuração do driver Docker
+### 🔧 Configurar driver Docker
 
 ```bash
 minikube config set driver docker
 ```
 
-### 📌 Inicializar o cluster
+---
 
-✅ Exemplo recomendado para 16 GB de RAM: (Ideal 8GB, mas vou usar 10GB)
+## 🚀 Inicializando o Cluster (Desenvolvimento Local)
+
+Para máquinas com **32 GB de RAM**, aloque metade da memória para o cluster:
 
 ```bash
-minikube start --memory=10240 --cpus=4 --driver=docker
+minikube start --memory=16384 --cpus=6 --driver=docker
+```
+
+| Memória da Máquina | Memória para Minikube |
+|--------------------|------------------------|
+| 8 GB               | 4 GB                   |
+| 16 GB              | 8–10 GB                |
+| **32 GB**          | **16 GB**              |
+| 64 GB              | 24–32 GB               |
+
+> 💡 **Dica:** Alocar até 50% da RAM do host para o cluster evita travamentos no sistema e mantém o ambiente fluido.
+
+---
+
+## ➕ Addons Úteis
+
+```bash
+minikube addons enable dashboard
+```
+
+### 📊 Acessar o Dashboard
+
+```bash
+minikube dashboard
 ```
 
 ---
 
 ## 📦 Helm
 
-### 📌 Para que serve?
+### 📌 O que é?
 
-Helm é o gerenciador de pacotes do Kubernetes, usado para instalar aplicações de forma simples e reutilizável.
+Helm é o gerenciador de pacotes do Kubernetes, facilitando a instalação e atualização de aplicações no cluster.
 
-### 📌 Instalação
+### ⚙️ Instalação
 
 ```bash
 curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 ```
 
-### 📌 Verificar instalação
+### 🔍 Verificação
 
 ```bash
 helm version
@@ -119,11 +144,11 @@ helm version
 
 ## 📈 K6
 
-### 📌 Para que serve?
+### 📌 O que é?
 
-K6 é uma ferramenta poderosa para testes de carga, permitindo simular múltiplos usuários e medir a performance das aplicações em Kubernetes.
+K6 é uma ferramenta moderna para testes de carga, ideal para medir a performance de aplicações em Kubernetes.
 
-### 📌 Instalação
+### ⚙️ Instalação
 
 ```bash
 sudo gpg -k
@@ -133,7 +158,7 @@ sudo apt update
 sudo apt install k6
 ```
 
-### 📌 Verificar instalação
+### 🔍 Verificação
 
 ```bash
 k6 version
@@ -141,13 +166,13 @@ k6 version
 
 ---
 
-## ⚖️ Escalonamento Automático com KEDA
+## ⚖️ Escalonamento com KEDA
 
-### 📌 Para que serve?
+### 📌 O que é?
 
-O **KEDA** permite escalonar automaticamente aplicações no Kubernetes com base em eventos externos (como mensagens em uma fila SQS, métricas personalizadas, etc).
+O **KEDA** permite escalonar pods com base em eventos externos (como filas SQS, Kafka, métricas, etc).
 
-### 1. Instalar o KEDA usando Helm
+### ⚙️ Instalação com Helm
 
 ```bash
 helm repo add kedacore https://kedacore.github.io/charts
@@ -155,72 +180,28 @@ helm repo update
 helm install keda kedacore/keda --namespace keda --create-namespace
 ```
 
-### 2. Exemplo de ScaledObject com SQS
-
-```yaml
-apiVersion: keda.sh/v1alpha1
-kind: TriggerAuthentication
-metadata:
-  name: aws-trigger-auth
-  namespace: apps
-spec:
-  secretTargetRef:
-    - parameter: awsAccessKeyID
-      name: aws-secret
-      key: AWS_ACCESS_KEY_ID
-    - parameter: awsSecretAccessKey
-      name: aws-secret
-      key: AWS_SECRET_ACCESS_KEY
----
-apiVersion: keda.sh/v1alpha1
-kind: ScaledObject
-metadata:
-  name: my-app-sqs-scaler
-  namespace: apps
-spec:
-  scaleTargetRef:
-    name: my-app
-  pollingInterval: 30
-  cooldownPeriod:  60
-  minReplicaCount: 1
-  maxReplicaCount: 10
-  triggers:
-    - type: aws-sqs-queue
-      metadata:
-        queueURL: http://localstack:4566/000000000000/minha-fila
-        queueLength: "5"
-        awsRegion: us-east-1
-      authenticationRef:
-        name: aws-trigger-auth
-```
-
 ---
 
-## 📊 Monitoramento com Elasticsearch, Kibana, APM e Filebeat
+## 📊 Observabilidade com Elasticsearch, Kibana, APM e Filebeat
 
-### 📌 Criar Namespaces
+### 🧪 Preparação
 
 ```bash
 kubectl create namespace monitoring
 kubectl create namespace apps
-```
-
-### 📌 Ajustar parâmetro do kernel
-
-```bash
 minikube ssh -- "sudo sysctl -w vm.max_map_count=262144"
 ```
 
-### 📌 Instalar componentes (fornecidos no diretório `elastic/`)
+### 📦 Deploy dos Componentes
 
 ```bash
-kubectl create -n monitoring -f elastic/elasticsearch.yaml
-kubectl create -n monitoring -f elastic/kibana.yaml
-kubectl create -n monitoring -f elastic/apm-server.yaml
-kubectl create -n monitoring -f elastic/filebeat.yaml   # ➕ Filebeat para coleta de logs
+kubectl apply -n monitoring -f elastic/elasticsearch.yaml
+kubectl apply -n monitoring -f elastic/kibana.yaml
+kubectl apply -n monitoring -f elastic/apm-server.yaml
+kubectl apply -n monitoring -f elastic/filebeat.yaml
 ```
 
-### 📌 Acessar Kibana
+### 🌐 Acessar Kibana
 
 ```bash
 minikube service kibana -n monitoring
@@ -228,11 +209,58 @@ minikube service kibana -n monitoring
 
 ---
 
-## 🚀 Inicializando o Ambiente
+## 🚀 Inicializando o Ambiente de Testes
 
-### 📌 Usar docker da VM
+### 🐋 Usar Docker da VM
 
 ```bash
 eval $(minikube docker-env)
-docker build -t localstack-custom .
 ```
+
+### 📦 Build das Imagens Customizadas
+
+```bash
+docker build -t localstack-custom localstack/
+docker build -t demo-publisher demo-publisher/
+docker build -t demo-consumer demo-consumer/
+```
+
+### ⚙️ Habilitar metrics-server (para HPA)
+
+```bash
+minikube addons enable metrics-server
+```
+
+### ⚙️ Deploy dos cenários
+
+### Recursos comuns
+
+```bash
+kubectl apply -n apps -f localstack/localstack.yaml
+kubectl apply -n apps -f demo-publisher/k8s/demo-publisher.yaml
+```
+
+### Cenários de teste
+
+#### Scenario 1:
+
+```bash
+kubectl apply -n apps -f demo-consumer/k8s/scenario1/ --recursive
+```
+
+#### Scenario 2:
+
+```bash
+kubectl apply -n apps -f demo-consumer/k8s/scenario2/ --recursive
+```
+
+
+### 📏 Verificar métricas de filas SQS (via LocalStack)
+
+```bash
+aws --endpoint-url=http://localstack.apps.svc.cluster.local:4566 sqs get-queue-attributes   --queue-url http://localstack.apps.svc.cluster.local:4566/000000000000/generic-queue   --attribute-name All
+```
+
+---
+
+💡 Feito com 💻 para desenvolvedores que curtem clusters rápidos, responsivos e fáceis de monitorar.

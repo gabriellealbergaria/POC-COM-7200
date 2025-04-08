@@ -28,6 +28,9 @@ dependencies {
     implementation("software.amazon.awssdk:sns:2.31.16")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
     implementation("javax.servlet:javax.servlet-api:4.0.1")
+    compileOnly("org.projectlombok:lombok:1.18.30")
+    annotationProcessor("org.projectlombok:lombok:1.18.30")
+    implementation("net.logstash.logback:logstash-logback-encoder:8.1")
 }
 
 

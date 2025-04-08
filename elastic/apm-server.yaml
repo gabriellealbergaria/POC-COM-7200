@@ -41,3 +41,18 @@ spec:
       - name: apm-server-config
         configMap:
           name: apm-server-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apm-server
+  namespace: monitoring
+spec:
+  selector:
+    app: apm-server
+  ports:
+    - name: http
+      port: 8200
+      targetPort: apm-port
+      protocol: TCP
+  type: ClusterIP

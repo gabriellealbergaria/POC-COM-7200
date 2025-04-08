@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: aws-cli
+  namespace: keda
+spec:
+  containers:
+    - name: aws-cli
+      image: amazon/aws-cli
+      command: [ "sleep", "3600" ]
+      resources:
+        limits:
+          memory: "128Mi"
+          cpu: "100m"
+  restartPolicy: Never

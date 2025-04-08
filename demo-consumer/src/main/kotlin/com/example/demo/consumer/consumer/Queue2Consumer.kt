@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component
 import software.amazon.awssdk.services.sqs.SqsClient
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest
+import java.time.Duration
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -20,7 +21,8 @@ class Queue2Consumer(
     @Value("\${aws.sqs.queue-url-2}") private val queueUrl: String,
     @Value("\${aws.sqs.consumer-2-enabled}") private val enabled: Boolean,
     @Value("\${aws.sqs.consumer-2-parallel}") private val parallelProcessing: Boolean,
-    @Value("\${aws.sqs.consumer-2-threads}") private val threadCount: Int
+    @Value("\${aws.sqs.consumer-2-threads}") private val threadCount: Int,
+    @Value("\${aws.sqs.consumer-2-delay}") private val processingDelay: Duration
 ) {
 
     private val pollingExecutor = Executors.newSingleThreadExecutor()
@@ -54,7 +56,8 @@ class Queue2Consumer(
                             val dto: PublishRequestDTO = objectMapper.readValue(msg.body())
                             log.info("Processando mensagem: {}", dto)
 
-                            // TODO: lógica de negócio aqui
+                            // ⏱ Simula tempo de processamento
+                            Thread.sleep(processingDelay.toMillis())
 
                             val deleteRequest = DeleteMessageRequest.builder()
                                 .queueUrl(queueUrl)
