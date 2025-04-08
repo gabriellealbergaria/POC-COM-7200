@@ -38,7 +38,7 @@ spec:
     - type: aws-sqs-queue
       metadata:
         queueURL: http://localstack.apps.svc.cluster.local:4566/000000000000/generic-queue
-        queueLength: "5"
+        queueLength: "100"
         awsRegion: us-east-1
         awsEndpoint: http://localstack.apps.svc.cluster.local:4566
       authenticationRef:
@@ -60,7 +60,7 @@ spec:
     - type: aws-sqs-queue
       metadata:
         queueURL: http://localstack.apps.svc.cluster.local:4566/000000000000/generic-queue-lazy-time
-        queueLength: "5"
+        queueLength: "100"
         awsRegion: us-east-1
         awsEndpoint: http://localstack.apps.svc.cluster.local:4566
       authenticationRef:

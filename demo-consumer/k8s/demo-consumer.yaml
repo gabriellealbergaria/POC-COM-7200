@@ -14,7 +14,7 @@ spec:
         app: demo-consumer-fila-1
     spec:
       containers:
-        - name: demo-consumer
+        - name: demo-consumer-fila-1
           image: demo-consumer:latest
           imagePullPolicy: Never
           ports:
@@ -84,7 +84,7 @@ spec:
         app: demo-consumer-fila-2
     spec:
       containers:
-        - name: demo-consumer
+        - name: demo-consumer-fila-2
           image: demo-consumer:latest
           imagePullPolicy: Never
           ports:

@@ -14,7 +14,7 @@ spec:
         app: demo-consumer-default
     spec:
       containers:
-        - name: demo-consumer
+        - name: demo-consumer-default
           image: demo-consumer:latest
           imagePullPolicy: Never
           ports:
@@ -57,7 +57,7 @@ spec:
               value: "false"
             - name: SQS_CONSUMER_1_THREADS
               value: "5"
-            - name: SQS_CONSUMER_2_DELAY
+            - name: SQS_CONSUMER_1_DELAY
               value: "1s"
             - name: SQS_CONSUMER_2_ENABLED
               value: "true"

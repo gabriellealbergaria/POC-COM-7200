@@ -240,6 +240,13 @@ kubectl apply -n apps -f localstack/localstack.yaml
 kubectl apply -n apps -f demo-publisher/k8s/demo-publisher.yaml
 ```
 
+### Abrir o swagger do publisher
+
+```bash
+minikube service demo-publisher -n apps --url
+```
+http://192.168.49.2:30080/demo-publisher/v1/swagger-ui/index.html
+
 ### Cenários de teste
 
 #### Scenario 1:
