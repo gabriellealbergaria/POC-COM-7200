@@ -247,17 +247,13 @@ kubectl apply -n apps -f demo-publisher/k8s/demo-publisher.yaml
 #### Scenario 1:
 
 ```bash
-kubectl apply -n apps -f demo-consumer/k8s/scenario1/demo-consumer.yaml
+kubectl apply -n apps -f demo-consumer/k8s/scenario1/ --recursive
 ```
 
 #### Scenario 2:
 
 ```bash
-kubectl apply -n apps -f demo-consumer/k8s/scenario2/demo-consumer-default.yaml
-
-kubectl apply -n apps -f demo-consumer/k8s/scenario2/demo-consumer.yaml
-
-kubectl apply -n apps -f demo-consumer/k8s/scenario2/demo-consumer.yaml
+kubectl apply -n apps -f demo-consumer/k8s/scenario2/ --recursive
 ```
 
 
