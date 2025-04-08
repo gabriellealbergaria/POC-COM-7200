@@ -30,6 +30,7 @@ dependencies {
     implementation("javax.servlet:javax.servlet-api:4.0.1")
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
+    implementation("net.logstash.logback:logstash-logback-encoder:8.1")
 }
 
 

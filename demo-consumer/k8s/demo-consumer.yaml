@@ -19,6 +19,13 @@ spec:
           imagePullPolicy: Never
           ports:
             - containerPort: 9090
+          resources:
+            requests:
+              memory: "384Mi"
+              cpu: "200m"
+            limits:
+              memory: "768Mi"
+              cpu: "750m"
           env:
             - name: JAVA_TOOL_OPTIONS
               value: "-javaagent:/elastic-apm-agent.jar"
@@ -78,6 +85,13 @@ spec:
           imagePullPolicy: Never
           ports:
             - containerPort: 9090
+          resources:
+            requests:
+              memory: "384Mi"
+              cpu: "200m"
+            limits:
+              memory: "768Mi"
+              cpu: "750m"
           env:
             - name: JAVA_TOOL_OPTIONS
               value: "-javaagent:/elastic-apm-agent.jar"

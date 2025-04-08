@@ -19,6 +19,13 @@ spec:
           imagePullPolicy: Never
           ports:
             - containerPort: 8080
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
           env:
             - name: JAVA_TOOL_OPTIONS
               value: "-javaagent:/elastic-apm-agent.jar"
@@ -45,6 +52,12 @@ spec:
 
             - name: AWS_SNS_TOPIC_ARN
               value: "arn:aws:sns:us-east-1:000000000000:generic-topic"
+
+            # Variáveis para limitar a heap da JVM
+            - name: JAVA_XMS
+              value: "256m"
+            - name: JAVA_XMX
+              value: "384m"
 ---
 apiVersion: v1
 kind: Service

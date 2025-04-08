@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: demo-consumer-default
+  name: demo-consumer
   namespace: apps
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
-      app: demo-consumer-default
+      app: demo-consumer
   template:
     metadata:
       labels:
-        app: demo-consumer-default
+        app: demo-consumer
     spec:
       containers:
         - name: demo-consumer
@@ -63,3 +63,23 @@ spec:
               value: "false"
             - name: SQS_CONSUMER_2_THREADS
               value: "5"
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: demo-consumer-hpa
+  namespace: apps
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: demo-consumer
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70

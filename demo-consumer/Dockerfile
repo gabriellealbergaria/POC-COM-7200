@@ -14,6 +14,11 @@ COPY --from=build /app/build/libs/*.jar app.jar
 # Baixa o Elastic APM Agent
 ADD https://repo1.maven.org/maven2/co/elastic/apm/elastic-apm-agent/1.45.0/elastic-apm-agent-1.45.0.jar /elastic-apm-agent.jar
 
+# Variáveis padrão da heap JVM (podem ser sobrescritas no Deployment)
+ENV JAVA_XMS=256m
+ENV JAVA_XMX=512m
+
 EXPOSE 9090
 
-ENTRYPOINT ["java", "-javaagent:/elastic-apm-agent.jar", "-jar", "app.jar"]
+# Usa shell para expansão de variáveis de ambiente na linha de execução
+ENTRYPOINT ["sh", "-c", "java -Xms$JAVA_XMS -Xmx$JAVA_XMX -javaagent:/elastic-apm-agent.jar -jar app.jar"]
