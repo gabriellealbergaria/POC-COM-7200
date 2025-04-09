@@ -59,15 +59,13 @@ class Queue2Consumer(
                     processingExecutor.submit {
                         try {
                             val dto: PublishRequestDTO = objectMapper.readValue(msg.body())
-                            dto.outputTimestamp = Instant.now()
-
                             log.info("Processando mensagem: {}", dto)
-
                             // ⏱ Simula tempo de processamento
                             Thread.sleep(processingDelay.toMillis())
 
                             // Envia para Elasticsearch com JsonData
                             try {
+                                dto.outputTimestamp = Instant.now()
                                 val json = objectMapper.writeValueAsString(dto)
                                 val reader = StringReader(json)
                                 val jsonData = JsonData.from(reader)

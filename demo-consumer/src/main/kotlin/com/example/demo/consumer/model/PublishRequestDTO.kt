@@ -12,7 +12,7 @@ data class PublishRequestDTO(
     val inputTimestamp: Instant? = null,
     var outputTimestamp: Instant? = null
 ) {
-    val durationInQueue: Long?
+    val durationInQueueSeconds: Long?
         get() = if (inputTimestamp != null && outputTimestamp != null) {
             Duration.between(inputTimestamp, outputTimestamp).toSeconds()
         } else {
