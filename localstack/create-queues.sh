@@ -3,10 +3,10 @@
 set -euo pipefail
 
 # Criação das filas SQS com VisibilityTimeout de 5s
-awslocal sqs create-queue --queue-name generic-queue --attributes VisibilityTimeout=20
-awslocal sqs create-queue --queue-name generic-queue-fifo.fifo --attributes FifoQueue=true,VisibilityTimeout=20
-awslocal sqs create-queue --queue-name generic-queue-real-time --attributes VisibilityTimeout=20
-awslocal sqs create-queue --queue-name generic-queue-lazy-time --attributes VisibilityTimeout=20
+awslocal sqs create-queue --queue-name generic-queue --attributes VisibilityTimeout=30
+awslocal sqs create-queue --queue-name generic-queue-fifo.fifo --attributes FifoQueue=true,VisibilityTimeout=30
+awslocal sqs create-queue --queue-name generic-queue-real-time --attributes VisibilityTimeout=30
+awslocal sqs create-queue --queue-name generic-queue-lazy-time --attributes VisibilityTimeout=30
 
 # Criação do tópico SNS
 TOPIC_ARN=$(awslocal sns create-topic --name generic-topic | grep TopicArn | cut -d'"' -f4)
