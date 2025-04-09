@@ -182,7 +182,7 @@ helm install keda kedacore/keda --namespace keda --create-namespace
 
 ---
 
-## 📊 Observabilidade com Elasticsearch, Kibana, APM e Filebeat
+## 📊 Observabilidade com Elasticsearch, Kibana
 
 ### 🧪 Preparação
 
@@ -192,81 +192,90 @@ kubectl create namespace apps
 minikube ssh -- "sudo sysctl -w vm.max_map_count=262144"
 ```
 
-### 📦 Deploy dos Componentes
+# 🚀 Iniciar Minikube com recursos customizados
 
 ```bash
-kubectl apply -n monitoring -f elastic/elasticsearch.yaml
-kubectl apply -n monitoring -f elastic/kibana.yaml
-kubectl apply -n monitoring -f elastic/apm-server.yaml
-kubectl apply -n monitoring -f elastic/filebeat.yaml
+minikube start \
+  --memory=24576 \
+  --cpus=6 \
+  --driver=docker
 ```
 
-### 🌐 Acessar Kibana
+# 🚀 Habilitar metrics to HPA
 
 ```bash
-minikube service kibana -n monitoring
+minikube addons enable metrics-server
+```
+# 📥 Instalar KEDA com Helm
+
+```bash
+helm repo add kedacore https://kedacore.github.io/charts
+helm repo update
+helm install keda kedacore/keda \
+  --namespace keda \
+  --create-namespace
 ```
 
----
+# 📂 Criar Namespaces e Ajustar Configurações
 
-## 🚀 Inicializando o Ambiente de Testes
+```bash
+kubectl create namespace monitoring
+kubectl create namespace apps
+```
 
-### 🐋 Usar Docker da VM
+# Ajustar configuração do kernel para Elasticsearch
+
+```bash
+minikube ssh -- "sudo sysctl -w vm.max_map_count=262144"
+```
+
+# 📑 Deploy do Elasticsearch
+
+```bash
+kubectl apply -n monitoring -f elastic/simple/ --recursive
+```
+
+# 🔑 Gerar token Elasticsearch-Kibana
+
+```bash
+kubectl exec -it elasticsearch-0 -n monitoring -- bash -c "elasticsearch-service-tokens create elastic/kibana kibana-token"
+```
+
+# 🐋 Configurar Docker para usar a VM do Minikube
 
 ```bash
 eval $(minikube docker-env)
 ```
 
-### 📦 Build das Imagens Customizadas
+# 📦 Construir Imagens Docker Customizadas
+
 
 ```bash
-docker build -t localstack-custom localstack/
-docker build -t demo-publisher demo-publisher/
+docker build -t localstack-custom localstack/ && \
 docker build -t demo-consumer demo-consumer/
 ```
 
-### ⚙️ Habilitar metrics-server (para HPA)
-
-```bash
-minikube addons enable metrics-server
-```
-
-### ⚙️ Deploy dos cenários
-
-### Recursos comuns
+# ▶️ Aplicar Cenários de Teste
 
 ```bash
 kubectl apply -n apps -f localstack/localstack.yaml
-kubectl apply -n apps -f demo-publisher/k8s/demo-publisher.yaml
 ```
 
-### Abrir o swagger do publisher
-
-```bash
-minikube service demo-publisher -n apps --url
-```
-http://192.168.49.2:30080/demo-publisher/v1/swagger-ui/index.html
-
-### Cenários de teste
-
-#### Scenario 1:
+## Scenario 1
 
 ```bash
 kubectl apply -n apps -f demo-consumer/k8s/scenario1/ --recursive
 ```
 
-#### Scenario 2:
+## Scenario 2
 
 ```bash
 kubectl apply -n apps -f demo-consumer/k8s/scenario2/ --recursive
 ```
 
-
-### 📏 Verificar métricas de filas SQS (via LocalStack)
+## Port-forward para publicar mensagens diretamente nas filas
 
 ```bash
-aws --endpoint-url=http://localstack.apps.svc.cluster.local:4566 sqs get-queue-attributes   --queue-url http://localstack.apps.svc.cluster.local:4566/000000000000/generic-queue   --attribute-name All
+kubectl port-forward svc/localstack 4566:4566 -n apps
 ```
-
----
 
