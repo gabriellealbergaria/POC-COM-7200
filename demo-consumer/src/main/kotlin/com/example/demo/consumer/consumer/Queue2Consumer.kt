@@ -50,7 +50,7 @@ class Queue2Consumer(
             while (true) {
                 val request = ReceiveMessageRequest.builder()
                     .queueUrl(queueUrl)
-                    .maxNumberOfMessages(10)
+                    .maxNumberOfMessages(1)
                     .waitTimeSeconds(5)
                     .build()
 
