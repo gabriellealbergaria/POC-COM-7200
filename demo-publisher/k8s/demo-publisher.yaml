@@ -27,15 +27,6 @@ spec:
               cpu: "500m"
               memory: "512Mi"
           env:
-            - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/elastic-apm-agent.jar"
-            - name: ELASTIC_APM_SERVICE_NAME
-              value: "demo-publisher"
-            - name: ELASTIC_APM_SERVER_URL
-              value: "http://apm-server.monitoring.svc.cluster.local:8200"
-            - name: ELASTIC_APM_APPLICATION_PACKAGES
-              value: "com.example.demo.publisher.config"
-
             - name: SERVER_PORT
               value: "8080"
             - name: SERVER_CONTEXT_PATH

@@ -15,11 +15,16 @@ spec:
         app: kibana
     spec:
       containers:
-      - name: kibana
-        image: docker.elastic.co/kibana/kibana:6.6.1
-        ports:
-        - containerPort: 5601
-          name: webinterface
+        - name: kibana
+          image: docker.elastic.co/kibana/kibana:8.11.1
+          env:
+            - name: ELASTICSEARCH_HOSTS
+              value: "http://elasticsearch:9200"
+            - name: ELASTICSEARCH_SERVICEACCOUNTTOKEN
+              value: "AAEAAWVsYXN0aWMva2liYW5hL2tpYmFuYS10b2tlbjpBLWJHU2NYTFJZYTltRE8xb2JDQ0hn"
+          ports:
+            - containerPort: 5601
+              name: webinterface
 ---
 apiVersion: v1
 kind: Service
@@ -30,7 +35,9 @@ metadata:
 spec:
   type: NodePort
   ports:
-  - port: 5601
-    name: webinterface
+    - port: 5601
+      targetPort: 5601
+      nodePort: 30001
+      name: webinterface
   selector:
     app: kibana

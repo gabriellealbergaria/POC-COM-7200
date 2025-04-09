@@ -1,44 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <!-- JSON para stdout com logstash-logback-encoder -->
-    <appender name="JSON_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
-            <providers>
-                <timestamp>
-                    <fieldName>timestamp</fieldName>
-                </timestamp>
-
-                <loggerName>
-                    <fieldName>logger</fieldName>
-                </loggerName>
-
-                <threadName>
-                    <fieldName>thread</fieldName>
-                </threadName>
-
-                <logLevel>
-                    <fieldName>level</fieldName>
-                </logLevel>
-
-                <pattern>
-                    <pattern>
-                        {
-                        "message": "%message"
-                        }
-                    </pattern>
-                </pattern>
-
-                <stackTrace>
-                    <fieldName>stack_trace</fieldName>
-                </stackTrace>
-            </providers>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[demo-publisher] %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!-- Root logger usando o appender JSON -->
     <root level="INFO">
-        <appender-ref ref="JSON_CONSOLE"/>
+        <appender-ref ref="STDOUT"/>
     </root>
 
 </configuration>

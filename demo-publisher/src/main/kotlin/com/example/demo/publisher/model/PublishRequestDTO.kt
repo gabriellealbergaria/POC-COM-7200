@@ -5,8 +5,9 @@ import java.util.*
 
 data class PublishRequestDTO(
     val uuid: UUID? = null,
-    val message: String,
-    val type: String? = null, // usado como message attribute para filtros SNS
+    val cenario: String? = null,
+    val contador: Long? = null,
+    val type: String? = null,
     val inputTimestamp: Instant = Instant.now(), // timestamp de entrada no tópico
     val outputTimestamp: Instant? = null         // preenchido após processamento
 )

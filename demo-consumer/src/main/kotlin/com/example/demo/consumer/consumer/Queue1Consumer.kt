@@ -1,5 +1,7 @@
 package com.example.demo.consumer.consumer
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient
+import co.elastic.clients.json.JsonData
 import com.example.demo.consumer.model.PublishRequestDTO
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Component
 import software.amazon.awssdk.services.sqs.SqsClient
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest
+import java.io.StringReader
 import java.time.Duration
 import java.time.Instant
 import java.util.concurrent.ExecutorService
@@ -19,6 +22,7 @@ import java.util.concurrent.Executors
 class Queue1Consumer(
     private val sqsClient: SqsClient,
     private val objectMapper: ObjectMapper,
+    private val elasticClient: ElasticsearchClient,
     @Value("\${aws.sqs.queue-url-1}") private val queueUrl: String,
     @Value("\${aws.sqs.consumer-1-enabled}") private val enabled: Boolean,
     @Value("\${aws.sqs.consumer-1-parallel}") private val parallelProcessing: Boolean,
@@ -55,14 +59,28 @@ class Queue1Consumer(
                     processingExecutor.submit {
                         try {
                             val dto: PublishRequestDTO = objectMapper.readValue(msg.body())
-
-                            dto.outputTimestamp = Instant.now();
+                            dto.outputTimestamp = Instant.now()
 
                             log.info("Processando mensagem: {}", dto)
 
-                            // ⏱ Simula tempo de processamento
                             Thread.sleep(processingDelay.toMillis())
 
+                            // Envia para Elasticsearch com JsonData
+                            try {
+                                val json = objectMapper.writeValueAsString(dto)
+                                val reader = StringReader(json)
+                                val jsonData = JsonData.from(reader)
+
+                                val response = elasticClient.index {
+                                    it.index("publish-events")
+                                        .document(jsonData)
+                                }
+                                log.info("Evento enviado para Elasticsearch com ID: {}", response.id())
+                            } catch (e: Exception) {
+                                log.error("Falha ao enviar evento para Elasticsearch. Ignorando...", e)
+                            }
+
+                            // Remove da fila, mesmo que o envio para o Elasticsearch tenha falhado
                             val deleteRequest = DeleteMessageRequest.builder()
                                 .queueUrl(queueUrl)
                                 .receiptHandle(msg.receiptHandle())

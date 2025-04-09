@@ -27,18 +27,11 @@ spec:
               memory: "768Mi"
               cpu: "750m"
           env:
-            - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/elastic-apm-agent.jar"
-            - name: ELASTIC_APM_SERVICE_NAME
-              value: "demo-consumer"
-            - name: ELASTIC_APM_SERVER_URL
-              value: "http://apm-server.monitoring.svc.cluster.local:8200"
-            - name: ELASTIC_APM_APPLICATION_PACKAGES
-              value: "com.example.demo.consumer.config"
             - name: SERVER_PORT
               value: "9090"
             - name: SERVER_CONTEXT_PATH
               value: "/demo-consumer/v1"
+
             - name: AWS_REGION
               value: "us-east-1"
             - name: AWS_ENDPOINT
@@ -47,10 +40,12 @@ spec:
               value: "test"
             - name: AWS_SECRET_KEY
               value: "test"
+
             - name: AWS_SQS_QUEUE_URL_1
               value: "http://localstack:4566/000000000000/generic-queue-real-time"
             - name: AWS_SQS_QUEUE_URL_2
               value: "http://localstack:4566/000000000000/generic-queue-lazy-time"
+
             - name: SQS_CONSUMER_1_ENABLED
               value: "true"
             - name: SQS_CONSUMER_1_PARALLEL
@@ -59,6 +54,7 @@ spec:
               value: "5"
             - name: SQS_CONSUMER_1_DELAY
               value: "1s"
+
             - name: SQS_CONSUMER_2_ENABLED
               value: "false"
             - name: SQS_CONSUMER_2_PARALLEL
@@ -67,6 +63,13 @@ spec:
               value: "0"
             - name: SQS_CONSUMER_2_DELAY
               value: "1s"
+
+            - name: ELASTICSEARCH_HOST
+              value: "elasticsearch.monitoring.svc.cluster.local"
+            - name: ELASTICSEARCH_PORT
+              value: "9200"
+            - name: ELASTICSEARCH_SCHEME
+              value: "http"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -97,18 +100,11 @@ spec:
               memory: "768Mi"
               cpu: "750m"
           env:
-            - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:/elastic-apm-agent.jar"
-            - name: ELASTIC_APM_SERVICE_NAME
-              value: "demo-consumer"
-            - name: ELASTIC_APM_SERVER_URL
-              value: "http://apm-server.monitoring.svc.cluster.local:8200"
-            - name: ELASTIC_APM_APPLICATION_PACKAGES
-              value: "com.example.demo.consumer.config"
             - name: SERVER_PORT
               value: "9090"
             - name: SERVER_CONTEXT_PATH
               value: "/demo-consumer/v1"
+
             - name: AWS_REGION
               value: "us-east-1"
             - name: AWS_ENDPOINT
@@ -117,10 +113,12 @@ spec:
               value: "test"
             - name: AWS_SECRET_KEY
               value: "test"
+
             - name: AWS_SQS_QUEUE_URL_1
               value: "http://localstack:4566/000000000000/generic-queue-real-time"
             - name: AWS_SQS_QUEUE_URL_2
               value: "http://localstack:4566/000000000000/generic-queue-lazy-time"
+
             - name: SQS_CONSUMER_1_ENABLED
               value: "false"
             - name: SQS_CONSUMER_1_PARALLEL
@@ -129,6 +127,7 @@ spec:
               value: "0"
             - name: SQS_CONSUMER_1_DELAY
               value: "1s"
+
             - name: SQS_CONSUMER_2_ENABLED
               value: "true"
             - name: SQS_CONSUMER_2_PARALLEL
@@ -137,3 +136,10 @@ spec:
               value: "5"
             - name: SQS_CONSUMER_2_DELAY
               value: "1s"
+
+            - name: ELASTICSEARCH_HOST
+              value: "elasticsearch.monitoring.svc.cluster.local"
+            - name: ELASTICSEARCH_PORT
+              value: "9200"
+            - name: ELASTICSEARCH_SCHEME
+              value: "http"

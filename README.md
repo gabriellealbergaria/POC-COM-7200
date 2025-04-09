@@ -271,3 +271,9 @@ aws --endpoint-url=http://localstack.apps.svc.cluster.local:4566 sqs get-queue-a
 ---
 
 💡 Feito com 💻 para desenvolvedores que curtem clusters rápidos, responsivos e fáceis de monitorar.
+
+
+
+kubectl exec -it elasticsearch-0 -n monitoring -- bash
+
+elasticsearch-service-tokens create elastic/kibana kibana-token

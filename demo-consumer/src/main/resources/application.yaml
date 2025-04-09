@@ -1,6 +1,9 @@
 spring:
   application:
     name: demo-consumer
+  web:
+    client:
+      type: jdk
 
 server:
   port: ${SERVER_PORT}
@@ -28,3 +31,8 @@ aws:
     consumer-2-parallel: ${SQS_CONSUMER_2_PARALLEL}
     consumer-2-threads: ${SQS_CONSUMER_2_THREADS}
     consumer-2-delay: ${SQS_CONSUMER_2_DELAY}
+
+elasticsearch:
+  host: ${ELASTICSEARCH_HOST}
+  port: ${ELASTICSEARCH_PORT}
+  scheme: ${ELASTICSEARCH_SCHEME}

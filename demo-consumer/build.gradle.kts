@@ -20,7 +20,6 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
@@ -30,7 +29,13 @@ dependencies {
     implementation("javax.servlet:javax.servlet-api:4.0.1")
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
-    implementation("net.logstash.logback:logstash-logback-encoder:8.1")
+
+    // Suporte total ao Kotlin + Jackson + JavaTime
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+
+    // Elasticsearch Java Client
+    implementation("co.elastic.clients:elasticsearch-java:8.11.1")
 }
 
 
