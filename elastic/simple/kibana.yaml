@@ -21,7 +21,7 @@ spec:
             - name: ELASTICSEARCH_HOSTS
               value: "http://elasticsearch:9200"
             - name: ELASTICSEARCH_SERVICEACCOUNTTOKEN
-              value: "AAEAAWVsYXN0aWMva2liYW5hL2tpYmFuYS10b2tlbjo4cEUyTFBILVNhMkdLT3dJVm5LT2ZR"
+              value: "AAEAAWVsYXN0aWMva2liYW5hL2tpYmFuYS10b2tlbjpUbnRDVGhuZVIyLWhHMW1BTWFRS0p3"
           ports:
             - containerPort: 5601
               name: webinterface

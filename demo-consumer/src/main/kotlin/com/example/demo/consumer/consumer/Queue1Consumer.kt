@@ -1,7 +1,6 @@
-package com.example.demo.consumer.consumer
+package com.example.demo.consumer
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient
-import co.elastic.clients.json.JsonData
 import com.example.demo.consumer.model.PublishRequestDTO
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component
 import software.amazon.awssdk.services.sqs.SqsClient
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest
-import java.io.StringReader
 import java.time.Duration
 import java.time.Instant
 import java.util.concurrent.ExecutorService
@@ -44,7 +42,10 @@ class Queue1Consumer(
             return
         }
 
-        log.info("Queue1Consumer iniciado. Paralelismo: {}, Threads: {}, Delay: {}", parallelProcessing, threadCount, processingDelay)
+        log.info(
+            "Queue1Consumer iniciado. Paralelismo: {}, Threads: {}, Delay: {}",
+            parallelProcessing, threadCount, processingDelay
+        )
 
         pollingExecutor.submit {
             while (true) {
@@ -52,6 +53,7 @@ class Queue1Consumer(
                     .queueUrl(queueUrl)
                     .maxNumberOfMessages(10)
                     .waitTimeSeconds(5)
+                    .visibilityTimeout(60)
                     .build()
 
                 val messages = sqsClient.receiveMessage(request).messages()
@@ -60,33 +62,32 @@ class Queue1Consumer(
                         try {
                             val dto: PublishRequestDTO = objectMapper.readValue(msg.body())
                             log.info("Processando mensagem: {}", dto)
-                            // ⏱ Simula tempo de processamento
+
                             Thread.sleep(processingDelay.toMillis())
+                            dto.outputTimestamp = Instant.now()
 
-                            // Envia para Elasticsearch com JsonData
                             try {
-                                dto.outputTimestamp = Instant.now()
-                                val json = objectMapper.writeValueAsString(dto)
-                                val reader = StringReader(json)
-                                val jsonData = JsonData.from(reader)
+                                val deleteRequest = DeleteMessageRequest.builder()
+                                    .queueUrl(queueUrl)
+                                    .receiptHandle(msg.receiptHandle())
+                                    .build()
+                                sqsClient.deleteMessage(deleteRequest)
+                                log.info("Mensagem removida da fila com sucesso.")
+                            } catch (e: Exception) {
+                                log.error("Erro ao remover a mensagem da fila: {}", e.message)
+                            }
 
-                                val response = elasticClient.index {
-                                    it.index("publish-events")
-                                        .document(jsonData)
+                            try {
+                                val response = elasticClient.index { builder ->
+                                    builder
+                                        .index("publish-events")
+                                        .document(dto)
                                 }
                                 log.info("Evento enviado para Elasticsearch com ID: {}", response.id())
                             } catch (e: Exception) {
                                 log.error("Falha ao enviar evento para Elasticsearch. Ignorando...", e)
                             }
 
-                            // Remove da fila, mesmo que o envio para o Elasticsearch tenha falhado
-                            val deleteRequest = DeleteMessageRequest.builder()
-                                .queueUrl(queueUrl)
-                                .receiptHandle(msg.receiptHandle())
-                                .build()
-                            sqsClient.deleteMessage(deleteRequest)
-
-                            log.info("Mensagem processada e removida com sucesso.")
                         } catch (e: Exception) {
                             log.error("Erro ao processar mensagem: ${e.message}", e)
                         }

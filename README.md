@@ -114,6 +114,10 @@ minikube start --memory=24576 --cpus=6 --driver=docker
 minikube addons enable dashboard
 ```
 
+```bash
+minikube addons enable metrics-server
+```
+
 ### 📊 Acessar o Dashboard
 
 ```bash
@@ -179,42 +183,7 @@ helm repo add kedacore https://kedacore.github.io/charts
 helm repo update
 helm install keda kedacore/keda --namespace keda --create-namespace
 ```
-
 ---
-
-## 📊 Observabilidade com Elasticsearch, Kibana
-
-### 🧪 Preparação
-
-```bash
-kubectl create namespace monitoring
-kubectl create namespace apps
-minikube ssh -- "sudo sysctl -w vm.max_map_count=262144"
-```
-
-# 🚀 Iniciar Minikube com recursos customizados
-
-```bash
-minikube start \
-  --memory=24576 \
-  --cpus=6 \
-  --driver=docker
-```
-
-# 🚀 Habilitar metrics to HPA
-
-```bash
-minikube addons enable metrics-server
-```
-# 📥 Instalar KEDA com Helm
-
-```bash
-helm repo add kedacore https://kedacore.github.io/charts
-helm repo update
-helm install keda kedacore/keda \
-  --namespace keda \
-  --create-namespace
-```
 
 # 📂 Criar Namespaces e Ajustar Configurações
 
@@ -279,3 +248,8 @@ kubectl apply -n apps -f demo-consumer/k8s/scenario2/ --recursive
 kubectl port-forward svc/localstack 4566:4566 -n apps
 ```
 
+## Abrir Kibana 
+
+```bash
+minikube service kibana -n monitoring
+```

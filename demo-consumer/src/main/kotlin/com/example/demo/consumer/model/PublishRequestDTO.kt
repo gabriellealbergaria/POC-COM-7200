@@ -7,7 +7,7 @@ import java.util.*
 data class PublishRequestDTO(
     val uuid: UUID? = null,
     val cenario: String? = null,
-    val contador: Long? = null,
+    val mensagem: String? = null,
     val type: String? = null,
     val inputTimestamp: Instant? = null,
     var outputTimestamp: Instant? = null

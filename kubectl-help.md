@@ -95,3 +95,23 @@ kubectl apply -f filebeat.yaml
 kubectl delete pod -n monitoring -l k8s-app=filebeat
 ```
 Aplica o novo `filebeat.yaml` e reinicia os pods do Filebeat para aplicar a configuração atualizada.
+
+
+# Recriar o PersistentVolumeClaim (PVC)
+kubectl delete pvc elasticsearch -n monitoring 
+kubectl apply -f elastic/simple/elasticsearch.yaml
+
+# Verificar o status do PVC
+kubectl get pvc elasticsearch
+
+# Reiniciar o StatefulSet (rollout)
+kubectl rollout restart statefulset elasticsearch
+
+# Verificar o status do StatefulSet e dos pods
+kubectl get pods
+
+# Verificar os logs do pod do Elasticsearch
+kubectl logs -f $(kubectl get pods -l app=elasticsearch -o jsonpath="{.items[0].metadata.name}")
+
+# Verificar eventos do pod (se necessário)
+kubectl describe pod $(kubectl get pods -l app=elasticsearch -o jsonpath="{.items[0].metadata.name}")

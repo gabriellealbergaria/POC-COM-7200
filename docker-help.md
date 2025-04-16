@@ -41,10 +41,24 @@ docker system prune -a --volumes
 Se quiser rodar todos os comandos de limpeza de uma vez, execute:
 
 ```bash
-docker stop $(docker ps -q) && \
-docker rm $(docker ps -aq) && \
-docker rmi -f $(docker images -q) && \
-docker volume rm $(docker volume ls -q)
+# Parar contêineres em execução (se houver)
+[ "$(docker ps -q)" ] && docker stop $(docker ps -q)
+
+# Remover todos os contêineres (se houver)
+[ "$(docker ps -aq)" ] && docker rm -f $(docker ps -aq)
+
+# Remover todas as imagens (se houver)
+[ "$(docker images -q)" ] && docker rmi -f $(docker images -q)
+
+# Remover todos os volumes (se houver)
+[ "$(docker volume ls -q)" ] && docker volume rm $(docker volume ls -q)
+
+# Remover redes personalizadas (ignorando bridge, host e none)
+custom_networks=$(docker network ls -q | grep -vE 'bridge|host|none')
+[ "$custom_networks" ] && docker network rm $custom_networks
+
+# Reiniciar o Docker
+sudo systemctl restart docker
 ```
 
 > 💡 Use com cuidado! Esses comandos removem **tudo** do Docker local.

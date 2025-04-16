@@ -30,15 +30,15 @@ metadata:
 spec:
   scaleTargetRef:
     name: demo-consumer-fila-1
-  minReplicaCount: 0
-  maxReplicaCount: 7
-  pollingInterval: 30
-  cooldownPeriod: 30
+  minReplicaCount: 3
+  maxReplicaCount: 6
+  pollingInterval: 5
+  cooldownPeriod: 60
   triggers:
     - type: aws-sqs-queue
       metadata:
         queueURL: http://localstack.apps.svc.cluster.local:4566/000000000000/generic-queue-real-time
-        queueLength: "100"
+        queueLength: "50"
         awsRegion: us-east-1
         awsEndpoint: http://localstack.apps.svc.cluster.local:4566
       authenticationRef:
@@ -52,15 +52,15 @@ metadata:
 spec:
   scaleTargetRef:
     name: demo-consumer-fila-2
-  minReplicaCount: 0
-  maxReplicaCount: 5
-  pollingInterval: 30
-  cooldownPeriod: 30
+  minReplicaCount: 3
+  maxReplicaCount: 6
+  pollingInterval: 5
+  cooldownPeriod: 60
   triggers:
     - type: aws-sqs-queue
       metadata:
         queueURL: http://localstack.apps.svc.cluster.local:4566/000000000000/generic-queue-lazy-time
-        queueLength: "100"
+        queueLength: "50"
         awsRegion: us-east-1
         awsEndpoint: http://localstack.apps.svc.cluster.local:4566
       authenticationRef:

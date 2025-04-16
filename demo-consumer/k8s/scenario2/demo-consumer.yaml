@@ -4,7 +4,7 @@ metadata:
   name: demo-consumer-fila-1
   namespace: apps
 spec:
-  replicas: 0
+  replicas: 3
   selector:
     matchLabels:
       app: demo-consumer-fila-1
@@ -14,7 +14,7 @@ spec:
         app: demo-consumer-fila-1
     spec:
       containers:
-        - name: demo-consumer-fila-1
+        - name: demo-consumer
           image: demo-consumer:latest
           imagePullPolicy: Never
           ports:
@@ -49,18 +49,18 @@ spec:
             - name: SQS_CONSUMER_1_ENABLED
               value: "true"
             - name: SQS_CONSUMER_1_PARALLEL
-              value: "false"
+              value: "true"
             - name: SQS_CONSUMER_1_THREADS
-              value: "5"
+              value: "10"
             - name: SQS_CONSUMER_1_DELAY
               value: "1s"
 
             - name: SQS_CONSUMER_2_ENABLED
               value: "false"
             - name: SQS_CONSUMER_2_PARALLEL
-              value: "false"
+              value: "true"
             - name: SQS_CONSUMER_2_THREADS
-              value: "0"
+              value: "10"
             - name: SQS_CONSUMER_2_DELAY
               value: "1s"
 
@@ -77,7 +77,7 @@ metadata:
   name: demo-consumer-fila-2
   namespace: apps
 spec:
-  replicas: 0
+  replicas: 3
   selector:
     matchLabels:
       app: demo-consumer-fila-2
@@ -87,7 +87,7 @@ spec:
         app: demo-consumer-fila-2
     spec:
       containers:
-        - name: demo-consumer-fila-2
+        - name: demo-consumer
           image: demo-consumer:latest
           imagePullPolicy: Never
           ports:
@@ -122,18 +122,18 @@ spec:
             - name: SQS_CONSUMER_1_ENABLED
               value: "false"
             - name: SQS_CONSUMER_1_PARALLEL
-              value: "false"
+              value: "true"
             - name: SQS_CONSUMER_1_THREADS
-              value: "0"
+              value: "10"
             - name: SQS_CONSUMER_1_DELAY
               value: "1s"
 
             - name: SQS_CONSUMER_2_ENABLED
               value: "true"
             - name: SQS_CONSUMER_2_PARALLEL
-              value: "false"
+              value: "true"
             - name: SQS_CONSUMER_2_THREADS
-              value: "5"
+              value: "10"
             - name: SQS_CONSUMER_2_DELAY
               value: "1s"
 

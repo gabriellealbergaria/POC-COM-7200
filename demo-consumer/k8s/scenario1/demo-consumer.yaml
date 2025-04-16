@@ -4,7 +4,7 @@ metadata:
   name: demo-consumer-fila-1
   namespace: apps
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: demo-consumer-fila-1
@@ -49,18 +49,18 @@ spec:
             - name: SQS_CONSUMER_1_ENABLED
               value: "true"
             - name: SQS_CONSUMER_1_PARALLEL
-              value: "false"
+              value: "true"
             - name: SQS_CONSUMER_1_THREADS
-              value: "5"
+              value: "10"
             - name: SQS_CONSUMER_1_DELAY
               value: "1s"
 
             - name: SQS_CONSUMER_2_ENABLED
               value: "false"
             - name: SQS_CONSUMER_2_PARALLEL
-              value: "false"
+              value: "true"
             - name: SQS_CONSUMER_2_THREADS
-              value: "0"
+              value: "10"
             - name: SQS_CONSUMER_2_DELAY
               value: "1s"
 
@@ -77,7 +77,7 @@ metadata:
   name: demo-consumer-fila-2
   namespace: apps
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: demo-consumer-fila-2
@@ -122,18 +122,18 @@ spec:
             - name: SQS_CONSUMER_1_ENABLED
               value: "false"
             - name: SQS_CONSUMER_1_PARALLEL
-              value: "false"
+              value: "true"
             - name: SQS_CONSUMER_1_THREADS
-              value: "0"
+              value: "10"
             - name: SQS_CONSUMER_1_DELAY
               value: "1s"
 
             - name: SQS_CONSUMER_2_ENABLED
               value: "true"
             - name: SQS_CONSUMER_2_PARALLEL
-              value: "false"
+              value: "true"
             - name: SQS_CONSUMER_2_THREADS
-              value: "5"
+              value: "10"
             - name: SQS_CONSUMER_2_DELAY
               value: "1s"
 
@@ -154,8 +154,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: demo-consumer-fila-1
-  minReplicas: 1
-  maxReplicas: 5
+  minReplicas: 3
+  maxReplicas: 6
   metrics:
     - type: Resource
       resource:
@@ -174,8 +174,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: demo-consumer-fila-2
-  minReplicas: 1
-  maxReplicas: 5
+  minReplicas: 3
+  maxReplicas: 6
   metrics:
     - type: Resource
       resource:
